@@ -1,5 +1,6 @@
 """ Utilities """
 import logging
+import io
 import os
 import re
 import time
@@ -24,6 +25,7 @@ from distlib.wheel import Wheel
 LOG = logging.getLogger(__name__)
 ALL_EXTENSIONS = Locator.source_extensions + Locator.binary_extensions
 SENTINEL = object()
+CHUNK_SIZE = 1 << 18  # read 256kB chunks
 
 
 class PackageParseError(ValueError):
@@ -113,6 +115,20 @@ def create_matcher(queries: List[str], query_type: str) -> Callable[[str], bool]
         return lambda x: any((q in x.lower() for q in queries))
     else:
         return lambda x: all((q in x.lower() for q in queries))
+
+
+def stream_file(
+    fp: Union[io.RawIOBase, io.BufferedIOBase, io.TextIOBase],
+    chunk_size: int = CHUNK_SIZE,
+) -> Iterator[Union[str, bytes]]:
+    """
+    Read an (opened) file in chunks of chunk_size bytes
+    """
+    while True:
+        chunk = fp.read(chunk_size)
+        if not chunk:
+            break
+        yield chunk
 
 
 class EnvironSettings:

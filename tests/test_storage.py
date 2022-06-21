@@ -172,7 +172,7 @@ class TestS3Storage(unittest.TestCase):
         kwargs = S3Storage.configure(settings)
         storage = S3Storage(MagicMock(), **kwargs)
         package = make_package()
-        storage.upload(package, BytesIO())
+        storage.upload(package, BytesIO(b"abc"))
         acl = list(self.bucket.objects.all())[0].Object().Acl()
         self.assertCountEqual(
             acl.grants,
@@ -380,6 +380,7 @@ class MockGCSBlob(object):
         self.updated = None
         self._content = None
         self._acl = None
+        self.client = MockGCSClient()
         self.bucket = bucket
         self.generate_signed_url = MagicMock(wraps=self._generate_signed_url)
         self.upload_from_file = MagicMock(wraps=self._upload_from_file)

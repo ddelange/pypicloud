@@ -12,6 +12,7 @@ from smart_open import open as _open
 
 from pypicloud.dateutil import utcnow
 from pypicloud.models import Package
+from pypicloud.util import stream_file
 
 from .base import IStorage
 
@@ -118,7 +119,7 @@ class AzureBlobStorage(IStorage):
                 posixpath.basename(blob_properties.name),
                 blob_properties.last_modified,
                 path=blob_properties.name,
-                **Package.read_metadata(metadata.metadata)
+                **Package.read_metadata(metadata.metadata),
             )
 
     def get_path(self, package):
@@ -137,7 +138,16 @@ class AzureBlobStorage(IStorage):
         metadata["version"] = package.version
 
         blob_client = self.container_client.get_blob_client(blob=path)
-        blob_client.upload_blob(data=datastream, metadata=metadata)
+        blob_client.set_blob_metadata(metadata=metadata)
+
+        with _open(
+            f"azure://{self.storage_container_name}/{path}",
+            "wb",
+            compression="disable",
+            transport_params={"client": blob_client},
+        ) as fp:
+            for chunk in stream_file(datastream):
+                fp.write(chunk)  # multipart upload
 
     def delete(self, package):
         path = self.get_path(package)
