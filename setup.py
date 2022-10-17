@@ -36,13 +36,11 @@ EXTRAS = {
     "dynamo": ["flywheel>=0.2.0"],
     "redis": ["redis"],
     "gcs": [
-        # "smart_open[gcs]>=7.0.0",  # ref #320
-        "smart_open[gcs]@git+https://github.com/cadnce/smart_open@use-gcs-open",  # ref #320
+        "smart_open[gcs]>=7.0.0",  # ref #320
     ],
     "azure-blob": [
         "azure-storage-blob>=12.5.0",
-        # "smart_open[azure]>=6.1.0",  # ref #304
-        "smart_open[azure]@git+https://github.com/cadnce/smart_open@use-gcs-open",  # ref #304
+        "smart_open[azure]>=6.1.0",  # ref #304
     ],
 }
 
