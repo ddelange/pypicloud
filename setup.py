@@ -13,7 +13,7 @@ CHANGES = re.sub(r":ref:`(.*?) <.*>`", r"\1", CHANGES)
 
 REQUIREMENTS_TEST = open(os.path.join(HERE, "requirements_test.txt")).readlines()
 REQUIREMENTS = [
-    "smart_open[s3,http]",
+    "smart_open[s3,http]@git+https://github.com/cadnce/smart_open@use-gcs-open",
     "boto3>=1.7.0",
     # beaker needs this
     "cryptography",
@@ -36,11 +36,13 @@ EXTRAS = {
     "dynamo": ["flywheel>=0.2.0"],
     "redis": ["redis"],
     "gcs": [
-        "smart_open[gcs]>=7.0.0",  # ref #320
+        # "smart_open[gcs]>=7.0.0",  # ref #320
+        "smart_open[gcs]@git+https://github.com/cadnce/smart_open@use-gcs-open",  # ref #320
     ],
     "azure-blob": [
         "azure-storage-blob>=12.5.0",
-        "smart_open[azure]>=6.1.0",  # ref #304
+        # "smart_open[azure]>=6.1.0",  # ref #304
+        "smart_open[azure]@git+https://github.com/cadnce/smart_open@use-gcs-open",  # ref #304
     ],
 }
 
